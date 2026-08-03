@@ -1,0 +1,481 @@
+:root {
+  --background: #ffffff;
+  --hero: #e8f8e9;
+  --surface: #ffffff;
+  --surface-soft: #f7faf7;
+  --border: #dce5dd;
+  --border-strong: #bdd2c1;
+  --text: #102019;
+  --muted: #64756a;
+  --soft: #eff8f0;
+  --green: #078a4b;
+  --green-dark: #067541;
+  --green-soft: #e0f4e6;
+  --shadow: 0 1px 2px rgba(16, 32, 25, 0.08), 0 8px 24px rgba(16, 32, 25, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--text);
+  font-family: "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.container {
+  width: min(1080px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav {
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.brand,
+.links,
+.actions,
+.team,
+.benefits,
+.cardBottom,
+.cardBottom div {
+  display: flex;
+  align-items: center;
+}
+
+.brand {
+  gap: 8px;
+  font-weight: 800;
+}
+
+.brand span span {
+  color: var(--green);
+}
+
+.brandIcon {
+  width: 27px;
+  height: 27px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--green);
+  color: var(--surface);
+  font-weight: 900;
+}
+
+.links {
+  gap: 34px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.actions {
+  gap: 14px;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.primaryButton,
+.secondaryButton,
+.searchCard button,
+.postForm button,
+.cardBottom button {
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  min-height: 38px;
+  padding: 9px 14px;
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 800;
+}
+
+.primaryButton,
+.searchCard button,
+.postForm button,
+.cardBottom button:last-child {
+  border-color: var(--green);
+  background: var(--green);
+  color: var(--surface);
+}
+
+.primaryButton:hover,
+.searchCard button:hover,
+.postForm button:hover,
+.cardBottom button:last-child:hover {
+  background: var(--green-dark);
+}
+
+.hero {
+  background: var(--hero);
+  border-bottom: 1px solid var(--border);
+  padding: 46px 0 66px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  padding: 6px 12px;
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  max-width: 720px;
+  margin: 18px 0 16px;
+  font-size: clamp(3rem, 6.2vw, 4.9rem);
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+
+.hero p {
+  color: var(--muted);
+  font-size: 1.16rem;
+  margin-bottom: 28px;
+}
+
+.searchCard {
+  width: min(860px, 100%);
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) 142px 126px auto;
+  gap: 10px;
+  align-items: end;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 18px;
+  padding: 12px;
+  box-shadow: var(--shadow);
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 750;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  background: var(--surface);
+  color: var(--text);
+  min-height: 39px;
+  padding: 10px 12px;
+  outline: none;
+}
+
+textarea {
+  min-height: 108px;
+  resize: vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px var(--green-soft);
+}
+
+.benefits {
+  gap: 30px;
+  margin-top: 16px;
+  color: var(--green);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid var(--border);
+}
+
+.stat {
+  text-align: center;
+  padding: 24px 12px;
+  border-left: 1px solid var(--border);
+}
+
+.stat:first-child {
+  border-left: 0;
+}
+
+.stat strong {
+  display: block;
+  color: var(--green);
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.stat span {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.latest {
+  padding: 58px 0;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+
+h2 {
+  margin-bottom: 8px;
+  font-size: clamp(1.7rem, 3vw, 2.1rem);
+  letter-spacing: -0.045em;
+}
+
+.sectionHeader p,
+.post p {
+  color: var(--muted);
+  margin-bottom: 0;
+}
+
+.matchGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.matchCard {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.cardTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.team {
+  gap: 12px;
+}
+
+.initials {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 0.625rem;
+  background: var(--green-soft);
+  color: var(--green);
+  font-weight: 900;
+}
+
+.team h3 {
+  margin-bottom: 3px;
+  font-size: 1rem;
+}
+
+.team h3 span {
+  color: var(--green);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.team p,
+.level span,
+.details,
+.description,
+.cardBottom {
+  color: var(--muted);
+}
+
+.team p {
+  margin-bottom: 0;
+  font-size: 0.9rem;
+}
+
+.level {
+  text-align: right;
+}
+
+.level strong {
+  display: inline-block;
+  border-radius: 999px;
+  background: var(--green);
+  color: var(--surface);
+  padding: 4px 9px;
+  font-size: 0.76rem;
+}
+
+.level span {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.78rem;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 18px;
+  padding: 16px;
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
+.description {
+  min-height: 48px;
+  padding: 0 16px 16px;
+  margin-bottom: 0;
+  font-size: 0.92rem;
+}
+
+.cardBottom {
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--surface-soft);
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+}
+
+.cardBottom div {
+  gap: 8px;
+}
+
+.cardBottom button {
+  min-height: 32px;
+  padding: 7px 11px;
+  font-size: 0.8rem;
+}
+
+.post {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(320px, 1fr);
+  gap: 28px;
+  padding: 54px 0 76px;
+  border-top: 1px solid var(--border);
+}
+
+.postForm {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.postForm textarea,
+.postForm button {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 860px) {
+  .links {
+    display: none;
+  }
+
+  .searchCard,
+  .matchGrid,
+  .post {
+    grid-template-columns: 1fr;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .stat {
+    border-left: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .stat:first-child {
+    border-top: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    width: min(100% - 22px, 1080px);
+  }
+
+  .actions .login {
+    display: none;
+  }
+
+  .hero {
+    padding: 34px 0 44px;
+  }
+
+  h1 {
+    font-size: 2.9rem;
+  }
+
+  .benefits,
+  .sectionHeader,
+  .cardBottom {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .details,
+  .postForm {
+    grid-template-columns: 1fr;
+  }
+}
