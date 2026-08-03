@@ -10,7 +10,7 @@ export default function SplashPage() {
             </span>
           </a>
           <div className="actions">
-            <a className="login" href="mailto:hej@matchbokning.se">
+            <a className="login" href="mailto:edvard.hofmann@outlook.com">
               Kontakta oss
             </a>
           </div>
