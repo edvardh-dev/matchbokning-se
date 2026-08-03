@@ -27,9 +27,6 @@ export default function SplashPage() {
               snabbt – utan Facebook-trådar, WhatsApp-kaos och mejl som försvinner.
             </p>
             <div className="splashActions">
-              <a className="primaryButton" href="mailto:hej@matchbokning.se">
-                Jag vill testa piloten
-              </a>
               <span>Första piloten fokuserar på ungdomsfotboll i Stockholm.</span>
             </div>
           </div>
