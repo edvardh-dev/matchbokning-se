@@ -44,6 +44,12 @@ type PublicMatchRequest = {
   municipality: string | null;
 };
 
+type MatchResult = {
+  matches: DemoMatch[];
+  source: "supabase" | "fallback";
+  message: string;
+};
+
 const fallbackMatches: DemoMatch[] = [
   {
     club: "Hammarby IF",
@@ -151,12 +157,16 @@ function mapSupabaseMatch(match: PublicMatchRequest): DemoMatch {
   };
 }
 
-async function getMatches(): Promise<DemoMatch[]> {
+async function getMatches(): Promise<MatchResult> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    return fallbackMatches;
+    return {
+      matches: fallbackMatches,
+      source: "fallback",
+      message: "Fallbackdata visas: Supabase-miljövariabler saknas i deploymenten.",
+    };
   }
 
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -167,14 +177,24 @@ async function getMatches(): Promise<DemoMatch[]> {
     .limit(12);
 
   if (error || !data?.length) {
-    return fallbackMatches;
+    return {
+      matches: fallbackMatches,
+      source: "fallback",
+      message: error
+        ? `Fallbackdata visas: Supabase svarade med fel: ${error.message}`
+        : "Fallbackdata visas: Supabase returnerade inga aktiva matchförfrågningar.",
+    };
   }
 
-  return (data as unknown as PublicMatchRequest[]).map(mapSupabaseMatch);
+  return {
+    matches: (data as unknown as PublicMatchRequest[]).map(mapSupabaseMatch),
+    source: "supabase",
+    message: `Live från Supabase: ${data.length} aktiva matchförfrågningar.`,
+  };
 }
 
 export default async function Home() {
-  const matches = await getMatches();
+  const { matches, source, message } = await getMatches();
 
   return (
     <main>
@@ -259,6 +279,7 @@ export default async function Home() {
           <div>
             <h2>Senaste matchförfrågningarna</h2>
             <p>Lag som söker motstånd just nu – hela listan uppdateras löpande.</p>
+            <p className={`dataStatus ${source}`}>{message}</p>
           </div>
           <a className="secondaryButton" href="#matcher">
             Visa alla matcher →
