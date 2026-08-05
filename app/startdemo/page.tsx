@@ -36,12 +36,16 @@ type PublicMatchRequest = {
   description: string | null;
   views: number;
   created_at: string;
-  team_name: string;
-  gender: "boys" | "girls" | "mixed";
-  birth_year: number;
-  club_name: string;
-  region: string;
-  municipality: string | null;
+  teams: {
+    name: string;
+    gender: "boys" | "girls" | "mixed";
+    birth_year: number;
+    clubs: {
+      name: string;
+      region: string;
+      municipality: string | null;
+    };
+  };
 };
 
 const fallbackMatches: DemoMatch[] = [
@@ -136,9 +140,9 @@ function formatTime(value: string | null) {
 
 function mapSupabaseMatch(match: PublicMatchRequest): DemoMatch {
   return {
-    club: match.club_name,
-    team: match.team_name,
-    area: match.municipality || match.region,
+    club: match.teams.clubs.name,
+    team: match.teams.name,
+    area: match.teams.clubs.municipality || match.teams.clubs.region,
     date: formatDate(match.match_date),
     time: formatTime(match.match_time),
     place: match.location,
@@ -161,8 +165,29 @@ async function getMatches(): Promise<DemoMatch[]> {
 
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
   const { data, error } = await supabase
-    .from("public_match_requests")
-    .select("*")
+    .from("match_requests")
+    .select(`
+      id,
+      match_date,
+      match_time,
+      location,
+      format,
+      level,
+      description,
+      views,
+      created_at,
+      teams!inner (
+        name,
+        gender,
+        birth_year,
+        clubs!inner (
+          name,
+          region,
+          municipality
+        )
+      )
+    `)
+    .eq("status", "active")
     .order("match_date", { ascending: true })
     .limit(12);
 
@@ -204,7 +229,7 @@ export default async function Home() {
 
       <section className="hero">
         <div className="container">
-          <span className="badge">● {matches.length} aktiva demomatcher från Supabase</span>
+          <span className="badge">● {matches.length} aktiva demomatcher</span>
           <h1>Hitta träningsmatcher på 2 minuter</h1>
           <p>Sveriges marknadsplats för träningsmatcher</p>
 
