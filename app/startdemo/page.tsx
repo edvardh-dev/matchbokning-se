@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { createClient } from "@supabase/supabase-js";
 
 export const metadata: Metadata = {
   title: "Matchbokning.se demo",
@@ -8,7 +9,42 @@ export const metadata: Metadata = {
   },
 };
 
-const matches = [
+export const dynamic = "force-dynamic";
+
+type DemoMatch = {
+  club: string;
+  team: string;
+  area: string;
+  date: string;
+  time: string;
+  place: string;
+  format: string;
+  age: string;
+  level: string;
+  text: string;
+  views: number;
+  posted: string;
+};
+
+type PublicMatchRequest = {
+  id: string;
+  match_date: string;
+  match_time: string | null;
+  location: string;
+  format: string;
+  level: string;
+  description: string | null;
+  views: number;
+  created_at: string;
+  team_name: string;
+  gender: "boys" | "girls" | "mixed";
+  birth_year: number;
+  club_name: string;
+  region: string;
+  municipality: string | null;
+};
+
+const fallbackMatches: DemoMatch[] = [
   {
     club: "Hammarby IF",
     team: "P2014A",
@@ -79,7 +115,67 @@ function Initials({ club }: { club: string }) {
   return <span className="initials">{club.split(" ").map((part) => part[0]).join("").slice(0, 2)}</span>;
 }
 
-export default function Home() {
+const levelLabels: Record<string, string> = {
+  easy: "Lätt",
+  medium: "Medel",
+  hard: "Svår",
+  hard_plus: "Svår+",
+  extra_hard: "Extra svår",
+};
+
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat("sv-SE", {
+    day: "numeric",
+    month: "short",
+  }).format(new Date(`${value}T12:00:00`));
+}
+
+function formatTime(value: string | null) {
+  return value ? value.slice(0, 5) : "Flexibel";
+}
+
+function mapSupabaseMatch(match: PublicMatchRequest): DemoMatch {
+  return {
+    club: match.club_name,
+    team: match.team_name,
+    area: match.municipality || match.region,
+    date: formatDate(match.match_date),
+    time: formatTime(match.match_time),
+    place: match.location,
+    format: match.format,
+    age: `födda ${match.birth_year}`,
+    level: levelLabels[match.level] || match.level,
+    text: match.description || "Matchförfrågan från Supabase.",
+    views: match.views,
+    posted: "från Supabase",
+  };
+}
+
+async function getMatches(): Promise<DemoMatch[]> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return fallbackMatches;
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+  const { data, error } = await supabase
+    .from("public_match_requests")
+    .select("*")
+    .order("match_date", { ascending: true })
+    .limit(12);
+
+  if (error || !data?.length) {
+    return fallbackMatches;
+  }
+
+  return (data as PublicMatchRequest[]).map(mapSupabaseMatch);
+}
+
+export default async function Home() {
+  const matches = await getMatches();
+
   return (
     <main>
       <header className="topbar">
@@ -108,7 +204,7 @@ export default function Home() {
 
       <section className="hero">
         <div className="container">
-          <span className="badge">● 387 aktiva matcher just nu</span>
+          <span className="badge">● {matches.length} aktiva demomatcher från Supabase</span>
           <h1>Hitta träningsmatcher på 2 minuter</h1>
           <p>Sveriges marknadsplats för träningsmatcher</p>
 
