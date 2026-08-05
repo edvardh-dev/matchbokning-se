@@ -36,16 +36,20 @@ type PublicMatchRequest = {
   description: string | null;
   views: number;
   created_at: string;
-  teams: {
-    name: string;
-    gender: "boys" | "girls" | "mixed";
-    birth_year: number;
-    clubs: {
-      name: string;
-      region: string;
-      municipality: string | null;
-    };
-  };
+  teams: TeamRelation | TeamRelation[];
+};
+
+type ClubRelation = {
+  name: string;
+  region: string;
+  municipality: string | null;
+};
+
+type TeamRelation = {
+  name: string;
+  gender: "boys" | "girls" | "mixed";
+  birth_year: number;
+  clubs: ClubRelation | ClubRelation[];
 };
 
 const fallbackMatches: DemoMatch[] = [
@@ -138,16 +142,23 @@ function formatTime(value: string | null) {
   return value ? value.slice(0, 5) : "Flexibel";
 }
 
+function firstItem<T>(value: T | T[]) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
 function mapSupabaseMatch(match: PublicMatchRequest): DemoMatch {
+  const team = firstItem(match.teams);
+  const club = firstItem(team.clubs);
+
   return {
-    club: match.teams.clubs.name,
-    team: match.teams.name,
-    area: match.teams.clubs.municipality || match.teams.clubs.region,
+    club: club.name,
+    team: team.name,
+    area: club.municipality || club.region,
     date: formatDate(match.match_date),
     time: formatTime(match.match_time),
     place: match.location,
     format: match.format,
-    age: `födda ${match.birth_year}`,
+    age: `födda ${team.birth_year}`,
     level: levelLabels[match.level] || match.level,
     text: match.description || "Matchförfrågan från Supabase.",
     views: match.views,
@@ -195,7 +206,7 @@ async function getMatches(): Promise<DemoMatch[]> {
     return fallbackMatches;
   }
 
-  return (data as PublicMatchRequest[]).map(mapSupabaseMatch);
+  return (data as unknown as PublicMatchRequest[]).map(mapSupabaseMatch);
 }
 
 export default async function Home() {
