@@ -36,20 +36,12 @@ type PublicMatchRequest = {
   description: string | null;
   views: number;
   created_at: string;
-  teams: TeamRelation | TeamRelation[];
-};
-
-type ClubRelation = {
-  name: string;
-  region: string;
-  municipality: string | null;
-};
-
-type TeamRelation = {
-  name: string;
   gender: "boys" | "girls" | "mixed";
   birth_year: number;
-  clubs: ClubRelation | ClubRelation[];
+  team_name: string;
+  club_name: string;
+  region: string;
+  municipality: string | null;
 };
 
 const fallbackMatches: DemoMatch[] = [
@@ -142,23 +134,16 @@ function formatTime(value: string | null) {
   return value ? value.slice(0, 5) : "Flexibel";
 }
 
-function firstItem<T>(value: T | T[]) {
-  return Array.isArray(value) ? value[0] : value;
-}
-
 function mapSupabaseMatch(match: PublicMatchRequest): DemoMatch {
-  const team = firstItem(match.teams);
-  const club = firstItem(team.clubs);
-
   return {
-    club: club.name,
-    team: team.name,
-    area: club.municipality || club.region,
+    club: match.club_name,
+    team: match.team_name,
+    area: match.municipality || match.region,
     date: formatDate(match.match_date),
     time: formatTime(match.match_time),
     place: match.location,
     format: match.format,
-    age: `födda ${team.birth_year}`,
+    age: `födda ${match.birth_year}`,
     level: levelLabels[match.level] || match.level,
     text: match.description || "Matchförfrågan från Supabase.",
     views: match.views,
@@ -176,29 +161,8 @@ async function getMatches(): Promise<DemoMatch[]> {
 
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
   const { data, error } = await supabase
-    .from("match_requests")
-    .select(`
-      id,
-      match_date,
-      match_time,
-      location,
-      format,
-      level,
-      description,
-      views,
-      created_at,
-      teams!inner (
-        name,
-        gender,
-        birth_year,
-        clubs!inner (
-          name,
-          region,
-          municipality
-        )
-      )
-    `)
-    .eq("status", "active")
+    .from("public_match_requests")
+    .select("*")
     .order("match_date", { ascending: true })
     .limit(12);
 
