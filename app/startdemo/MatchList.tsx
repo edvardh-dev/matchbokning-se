@@ -38,6 +38,8 @@ type PublicMatchRequest = {
 
 type MatchSource = "loading" | "supabase" | "fallback";
 
+const supabaseProjectUrl = "https://lnytfcuuidccmfnrgibc.supabase.co";
+
 const fallbackMatches: DemoMatch[] = [
   {
     club: "Hammarby IF",
@@ -137,6 +139,11 @@ function mapSupabaseMatch(match: PublicMatchRequest): DemoMatch {
   };
 }
 
+function getSupabaseUrl() {
+  const configuredUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  return configuredUrl?.match(/https:\/\/[a-z0-9]+\.supabase\.co/)?.[0] || supabaseProjectUrl;
+}
+
 export default function MatchList() {
   const [matches, setMatches] = useState(fallbackMatches);
   const [source, setSource] = useState<MatchSource>("loading");
@@ -146,12 +153,12 @@ export default function MatchList() {
     let isActive = true;
 
     async function loadMatches() {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseUrl = getSupabaseUrl();
       const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-      if (!supabaseUrl || !supabaseAnonKey) {
+      if (!supabaseAnonKey) {
         setSource("fallback");
-        setMessage("Fallbackdata visas: Supabase-miljövariabler saknas i deploymenten.");
+        setMessage("Fallbackdata visas: Supabase anon-nyckel saknas i deploymenten.");
         return;
       }
 
