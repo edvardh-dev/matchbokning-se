@@ -10,7 +10,10 @@ type Club = {
   region: string;
   municipality: string | null;
   verified: boolean;
+  website: string | null;
 };
+
+const stffClubWebsitePattern = "https://www.stff.se/rs/foreningar/%";
 
 function normalize(value: string) {
   return value.trim().toLocaleLowerCase("sv-SE");
@@ -33,9 +36,26 @@ export default function PostMatchForm() {
       }
 
       const supabase = createClient(getSupabaseUrl(), supabaseAnonKey);
+      const { data: stffClubs, error: stffError } = await supabase
+        .from("clubs")
+        .select("id,name,region,municipality,verified,website")
+        .like("website", stffClubWebsitePattern)
+        .order("name", { ascending: true });
+
+      if (stffError) {
+        setClubStatus(`Kunde inte ladda StFF-föreningar: ${stffError.message}`);
+        return;
+      }
+
+      if (stffClubs?.length) {
+        setClubs(stffClubs as Club[]);
+        setClubStatus(`${stffClubs.length} StFF-föreningar laddade från databasen.`);
+        return;
+      }
+
       const { data, error } = await supabase
         .from("clubs")
-        .select("id,name,region,municipality,verified")
+        .select("id,name,region,municipality,verified,website")
         .order("name", { ascending: true });
 
       if (!isActive) {
@@ -48,7 +68,7 @@ export default function PostMatchForm() {
       }
 
       setClubs((data as Club[]) || []);
-      setClubStatus(`${data?.length || 0} godkända föreningar laddade från databasen.`);
+      setClubStatus(`${data?.length || 0} demoföreningar laddade. Kör StFF-importen för hela listan.`);
     }
 
     loadClubs().catch((error: unknown) => {
