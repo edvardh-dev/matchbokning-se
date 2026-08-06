@@ -439,8 +439,30 @@ h2 {
 }
 
 .postForm textarea,
-.postForm button {
+.postForm button,
+.postForm .wide {
   grid-column: 1 / -1;
+}
+
+.postForm button:disabled {
+  border-color: var(--border);
+  background: var(--surface-soft);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.fieldStatus {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+.fieldStatus.valid {
+  color: var(--green);
+}
+
+.fieldStatus.invalid {
+  color: #b45309;
 }
 
 .splashMain {

@@ -2,6 +2,7 @@
 
 import { createClient } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
+import { getSupabaseAnonKey, getSupabaseUrl } from "../../lib/supabasePublic";
 
 type DemoMatch = {
   club: string;
@@ -37,8 +38,6 @@ type PublicMatchRequest = {
 };
 
 type MatchSource = "loading" | "supabase" | "fallback";
-
-const supabaseProjectUrl = "https://lnytfcuuidccmfnrgibc.supabase.co";
 
 const fallbackMatches: DemoMatch[] = [
   {
@@ -139,11 +138,6 @@ function mapSupabaseMatch(match: PublicMatchRequest): DemoMatch {
   };
 }
 
-function getSupabaseUrl() {
-  const configuredUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  return configuredUrl?.match(/https:\/\/[a-z0-9]+\.supabase\.co/)?.[0] || supabaseProjectUrl;
-}
-
 export default function MatchList() {
   const [matches, setMatches] = useState(fallbackMatches);
   const [source, setSource] = useState<MatchSource>("loading");
@@ -154,7 +148,7 @@ export default function MatchList() {
 
     async function loadMatches() {
       const supabaseUrl = getSupabaseUrl();
-      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      const supabaseAnonKey = getSupabaseAnonKey();
 
       if (!supabaseAnonKey) {
         setSource("fallback");

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import MatchList from "./MatchList";
+import PostMatchForm from "./PostMatchForm";
 
 export const metadata: Metadata = {
   title: "Matchbokning.se demo",
@@ -107,24 +108,7 @@ export default function Home() {
             skicka förfrågningar och ändra status från aktiv till bokad.
           </p>
         </div>
-        <form className="postForm">
-          <input placeholder="Förening" />
-          <input placeholder="Lag, t.ex. P2014 Grön" />
-          <select defaultValue="9v9">
-            <option>5v5</option>
-            <option>7v7</option>
-            <option>9v9</option>
-            <option>11v11</option>
-          </select>
-          <select defaultValue="Svår">
-            <option>Lätt</option>
-            <option>Medel</option>
-            <option>Svår</option>
-            <option>Svår+</option>
-          </select>
-          <textarea placeholder="Beskriv datum, plats, nivå och önskat motstånd." />
-          <button type="button">Publicera matchförfrågan</button>
-        </form>
+        <PostMatchForm />
       </section>
     </main>
   );
